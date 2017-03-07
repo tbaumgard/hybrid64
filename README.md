@@ -19,6 +19,8 @@ AAAAAAAABBBBBBBB
 XXXXXYYYYYZZZZZZ
 ```
 
+Since hybrid64 uses a pair of two bytes rather than larger groups, its implementations for encoding and decoding are simpler.
+
 ### Alphabet
 
 The hybrid64 alphabet in order is:
@@ -61,7 +63,6 @@ If the input is ASCII text but is primarily uppercase letters, it may be better 
 
 ### Miscellaneous Stats and Notes
 
-- Since hybrid64 uses a pair of two bytes rather than larger groups, its implementations for encoding and decoding are simpler.
 - The average efficiency in terms of number of characters in the output compared to the number of characters in the input is around 63% for base32, 63% for zbase32, 75% for base64, and 67% for hybrid64. hybrid64's efficiency is far more stable than the others, and it can be just as or more efficient than base64 for many small data lengths.
 - Around 67% of the characters in the output of hybrid64 are guaranteed to be in the alphabet used by zbase32. For random input, the expected amount is around 83%. For English text using hybrid64-ascii, the amount can be considerably higher, with both the United States Declaration of Independence and the Gettysburg Address at around 99%.
 - Whenever possible, data encoded in hybrid64 should be displayed using a typeface that makes it easy to distinguish problematic characters such as I, l, 1, O, and 0.
