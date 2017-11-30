@@ -2,125 +2,131 @@
 
 const HYBRID64 = "ybndrfg8ejkmcpqxot1uwisza345h769AHvWPEBZMTIDNYJRSlLKFXC2GVOQU0-_";
 
-function hybrid64_encode($binary) {
-	$length = strlen($binary);
-	$result = "";
+function hybrid64_encode($binaryData) {
+	$encodedString = "";
 
 	// Handle all of the pairs.
-	for ($i = 0; $i + 1 < $length; $i += 2) {
-		$byte1 = ord($binary[$i]);
-		$byte2 = ord($binary[$i+1]);
+	for ($i = 0; $i + 1 < strlen($binaryData); $i += 2) {
+		$int1 = ord($binaryData[$i]);
+		$int2 = ord($binaryData[$i+1]);
 
-		$char1 = HYBRID64[$byte1 >> 3];
-		$char2 = HYBRID64[(($byte1 & 0b111) << 2) | ($byte2 >> 6)];
-		$char3 = HYBRID64[$byte2 & 0b111111];
+		$char1 = HYBRID64[$int1 >> 3];
+		$char2 = HYBRID64[(($int1 & 0b111) << 2) | ($int2 >> 6)];
+		$char3 = HYBRID64[$int2 & 0b111111];
 
-		$result .= $char1 . $char2 . $char3;
+		$encodedString .= $char1 . $char2 . $char3;
 	}
 
-	// Handle a trailing byte. $i will either be zero or $length - 1.
-	if ($i != $length) {
-		$byte = ord($binary[$length - 1]);
+	// Handle a trailing byte. $i will either be zero or length - 1.
+	if ($i != strlen($binaryData)) {
+		$int1 = ord($binaryData[strlen($binaryData) - 1]);
 
-		$char1 = HYBRID64[$byte >> 3];
-		$char2 = HYBRID64[($byte & 0b111) << 2];
+		$char1 = HYBRID64[$int1 >> 3];
+		$char2 = HYBRID64[($int1 & 0b111) << 2];
 
-		$result .= $char1 . $char2;
+		$encodedString .= $char1 . $char2;
 	}
 
-	return $result;
+	return $encodedString;
 }
 
-function hybrid64_decode($string) {
-	$length = strlen($string);
-	$result = "";
+function hybrid64_decode($encodedString) {
+	$decodedData = "";
 
 	// Handle all of the triplets.
-	for ($i = 0; $i + 2 < $length; $i += 3) {
-		$char1 = strpos(HYBRID64, $string[$i]);
-		$char2 = strpos(HYBRID64, $string[$i+1]);
-		$char3 = strpos(HYBRID64, $string[$i+2]);
+	for ($i = 0; $i + 2 < strlen($encodedString); $i += 3) {
+		$int1 = strpos(HYBRID64, $encodedString[$i]);
+		$int2 = strpos(HYBRID64, $encodedString[$i+1]);
+		$int3 = strpos(HYBRID64, $encodedString[$i+2]);
 
-		$byte1 = chr(($char1 << 3) | ($char2 >> 2));
-		$byte2 = chr((($char2 & 0b11) << 6) | $char3);
+		$byte1 = chr(($int1 << 3) | ($int2 >> 2));
+		$byte2 = chr((($int2 & 0b11) << 6) | $int3);
 
-		$result .= $byte1 . $byte2;
+		$decodedData .= $byte1 . $byte2;
 	}
 
-	// Handle a trailing pair. $i will either be zero or $length - 2.
-	if ($i != $length) {
-		$char1 = strpos(HYBRID64, $string[$length-2]);
-		$char2 = strpos(HYBRID64, $string[$length-1]);
+	// Handle a trailing pair. $i will either be zero or length - 2.
+	if ($i != strlen($encodedString)) {
+		$int1 = strpos(HYBRID64, $encodedString[strlen($encodedString)-2]);
+		$int2 = strpos(HYBRID64, $encodedString[strlen($encodedString)-1]);
 
-		$byte = chr(($char1 << 3) | ($char2 >> 2));
+		$byte1 = chr(($int1 << 3) | ($int2 >> 2));
 
-		$result .= $byte;
+		$decodedData .= $byte1;
 	}
 
-	return $result;
+	return $decodedData;
 }
 
-function hybrid64_ascii_encode($binary) {
-	$length = strlen($binary);
-	$result = "";
+function hybrid64_ascii_encode($binaryData) {
+	$encodedString = "";
 
 	// Handle all of the pairs.
-	for ($i = 0; $i + 1 < $length; $i += 2) {
-		$byte1 = ord($binary[$i]);
-		$byte2 = ord($binary[$i+1]);
+	for ($i = 0; $i + 1 < strlen($binaryData); $i += 2) {
+		$int1 = ord($binaryData[$i]);
+		$int2 = ord($binaryData[$i+1]);
 
 		// XOR the second byte to switch which groups of ASCII are always in
 		// zbase32.
-		$byte2 ^= 0b00100000;
+		$int2 ^= 0b00100000;
 
-		$char1 = HYBRID64[$byte1 >> 3];
-		$char2 = HYBRID64[(($byte1 & 0b111) << 2) | ($byte2 >> 6)];
-		$char3 = HYBRID64[$byte2 & 0b111111];
+		$char1 = HYBRID64[$int1 >> 3];
+		$char2 = HYBRID64[(($int1 & 0b111) << 2) | ($int2 >> 6)];
+		$char3 = HYBRID64[$int2 & 0b111111];
 
-		$result .= $char1 . $char2 . $char3;
+		$encodedString .= $char1 . $char2 . $char3;
 	}
 
-	// Handle a trailing byte. $i will either be zero or $length - 1.
-	if ($i != $length) {
-		$byte = ord($binary[$length - 1]);
+	// Handle a trailing byte. $i will either be zero or length - 1.
+	if ($i != strlen($binaryData)) {
+		$int1 = ord($binaryData[strlen($binaryData) - 1]);
 
-		$char1 = HYBRID64[$byte >> 3];
-		$char2 = HYBRID64[($byte & 0b111) << 2];
+		$char1 = HYBRID64[$int1 >> 3];
+		$char2 = HYBRID64[($int1 & 0b111) << 2];
 
-		$result .= $char1 . $char2;
+		$encodedString .= $char1 . $char2;
 	}
 
-	return $result;
+	return $encodedString;
 }
 
-function hybrid64_ascii_decode($string) {
-	$length = strlen($string);
-	$result = "";
+function hybrid64_ascii_decode($encodedString) {
+	$decodedData = "";
 
 	// Handle all of the triplets.
-	for ($i = 0; $i + 2 < $length; $i += 3) {
-		$char1 = strpos(HYBRID64, $string[$i]);
-		$char2 = strpos(HYBRID64, $string[$i+1]);
-		$char3 = strpos(HYBRID64, $string[$i+2]);
+	for ($i = 0; $i + 2 < strlen($encodedString); $i += 3) {
+		$int1 = strpos(HYBRID64, $encodedString[$i]);
+		$int2 = strpos(HYBRID64, $encodedString[$i+1]);
+		$int3 = strpos(HYBRID64, $encodedString[$i+2]);
 
 		// XOR the third character's index to undo the XORing done in the encoder.
-		$char3 ^= 0b00100000;
+		$int3 ^= 0b00100000;
 
-		$byte1 = chr(($char1 << 3) | ($char2 >> 2));
-		$byte2 = chr((($char2 & 0b11) << 6) | $char3);
+		$byte1 = chr(($int1 << 3) | ($int2 >> 2));
+		$byte2 = chr((($int2 & 0b11) << 6) | $int3);
 
-		$result .= $byte1 . $byte2;
+		$decodedData .= $byte1 . $byte2;
 	}
 
-	// Handle a trailing pair. $i will either be zero or $length - 2.
-	if ($i != $length) {
-		$char1 = strpos(HYBRID64, $string[$length-2]);
-		$char2 = strpos(HYBRID64, $string[$length-1]);
+	// Handle a trailing pair. $i will either be zero or length - 2.
+	if ($i != strlen($encodedString)) {
+		$int1 = strpos(HYBRID64, $encodedString[strlen($encodedString)-2]);
+		$int2 = strpos(HYBRID64, $encodedString[strlen($encodedString)-1]);
 
-		$byte = chr(($char1 << 3) | ($char2 >> 2));
+		$byte1 = chr(($int1 << 3) | ($int2 >> 2));
 
-		$result .= $byte;
+		$decodedData .= $byte1;
 	}
 
-	return $result;
+	return $decodedData;
 }
+
+$testString = "hybrid64";
+
+$encoded = hybrid64_encode($testString);
+$decoded = hybrid64_decode($encoded);
+echo $encoded, "\n", $decoded, "\n";
+
+$encoded = hybrid64_ascii_encode($testString);
+$decoded = hybrid64_ascii_decode($encoded);
+echo $encoded, "\n", $decoded, "\n";
