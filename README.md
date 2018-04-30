@@ -6,7 +6,7 @@ hybrid64 is a binary-to-text encoding scheme that builds on ideas from [base32](
 
 Read about [base32](https://tools.ietf.org/html/rfc4648#section-6), [zbase32](http://philzimmermann.com/docs/human-oriented-base-32-encoding.txt), and [base64](https://tools.ietf.org/html/rfc4648#section-4) to get a better idea about how they relate to hybrid64. The most interesting details when considering them in the context of hybrid64 are that zbase32 is similar to base32 but makes it "[as convenient as possible for human users to manipulate](http://philzimmermann.com/docs/human-oriented-base-32-encoding.txt)," and base64 uses an alphabet that is twice as large but more efficient than either of those two.
 
-## hybrid 64
+## hybrid64
 
 ### Algorithm Overview
 
